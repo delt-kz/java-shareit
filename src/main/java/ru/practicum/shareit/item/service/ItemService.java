@@ -1,13 +1,18 @@
 package ru.practicum.shareit.item.service;
 
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.List;
 
+@Transactional(readOnly = true)
 public interface ItemService {
-    ItemDto create(ItemDto dto, Long ownerId);
+    @Transactional
+    ItemDto create(CreateItemDto dto, Long ownerId);
 
-    ItemDto update(ItemDto patch, Long ownerId, Long itemId);
+    @Transactional
+    ItemDto update(CreateItemDto patch, Long ownerId, Long itemId);
 
     ItemDto getById(Long itemId, Long requesterId);
 
