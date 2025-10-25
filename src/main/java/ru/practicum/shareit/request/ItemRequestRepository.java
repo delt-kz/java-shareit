@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> {
-    List<ItemRequest> findAllByRequestorId(Long requestorId);
+    List<ItemRequest> findAllByRequestorId(long id);
 
-    List<ItemRequest> findAllByRequestorIdIsNot(Long requestorId);
+    List<ItemRequest> findAllByRequestorIdIsNot(long id);
 }

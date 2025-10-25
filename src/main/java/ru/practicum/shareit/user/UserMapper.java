@@ -17,20 +17,17 @@ public class UserMapper {
                 user.getEmail());
     }
 
-    public static User toUser(UserDto dto) {
-        User user = new User();
-        user.setId(dto.getId());
-        user.setName(dto.getName());
-        user.setEmail(dto.getEmail());
-        return user;
-    }
-    public static User fromUpdate(CreateUserDto patch, User oldUser) {
+    public static User fromUpdate(UserDto patch, User oldUser) {
         User newUser = new User();
         if (patch.getEmail() != null) {
-            oldUser.setEmail(patch.getEmail());
+            newUser.setEmail(patch.getEmail());
+        } else {
+            newUser.setEmail(oldUser.getEmail());
         }
         if (patch.getName() != null) {
-            oldUser.setName(patch.getName());
+            newUser.setName(patch.getName());
+        } else {
+            newUser.setName(oldUser.getName());
         }
         newUser.setId(oldUser.getId());
         return newUser;

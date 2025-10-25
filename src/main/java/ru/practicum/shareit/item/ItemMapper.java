@@ -23,20 +23,23 @@ public class ItemMapper {
                 item.getRequest() != null ? item.getRequest().getId() : null);
     }
 
-    public static Item toItem(ItemDto dto) {
-        Item item = new Item();
-        item.setId(dto.getId());
-        item.setName(dto.getName());
-        item.setDescription(dto.getDescription());
-        item.setAvailable(dto.getAvailable());
-        return item;
-    }
-
     public static Item fromUpdate(CreateItemDto patch, Item oldItem) {
         Item newItem = new Item();
-        if (patch.getName() != null) newItem.setName(patch.getName());
-        if (patch.getDescription() != null) newItem.setDescription(patch.getDescription());
-        if (patch.getAvailable() != null) newItem.setAvailable(patch.getAvailable());
+        if (patch.getName() != null) {
+            newItem.setName(patch.getName());
+        } else {
+            newItem.setName(oldItem.getName());
+        }
+        if (patch.getDescription() != null) {
+            newItem.setDescription(patch.getDescription());
+        } else {
+            newItem.setDescription(oldItem.getDescription());
+        }
+        if (patch.getAvailable() != null) {
+            newItem.setAvailable(patch.getAvailable());
+        } else {
+            newItem.setAvailable(oldItem.getAvailable());
+        }
         newItem.setId(oldItem.getId());
         newItem.setRequest(oldItem.getRequest());
         newItem.setOwner(oldItem.getOwner());

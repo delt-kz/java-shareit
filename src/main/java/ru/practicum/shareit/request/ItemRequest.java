@@ -16,6 +16,7 @@ import java.util.Objects;
 @Getter @Setter @ToString
 public class ItemRequest {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
     @ManyToOne

@@ -6,6 +6,8 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.User;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +16,10 @@ import java.util.List;
 public class RequestMapper {
 
     public static ItemRequestDto toDto(ItemRequest ir) {
-        String regDate = DateTimeFormatter.ISO_INSTANT
-                .format(ir.getCreated());
-        return new ItemRequestDto(ir.getId(), ir.getDescription(), ir.getRequestor().getId(), regDate);
-    }
-
-    public static ItemRequest toItemRequest(ItemRequestDto itemRequestDto) {
-        ItemRequest itemRequest = new ItemRequest();
-        itemRequest.setId(itemRequestDto.getId());
-        itemRequest.setDescription(itemRequestDto.getDescription());
-        return itemRequest;
+        return new ItemRequestDto(ir.getId(),
+                ir.getDescription(),
+                ir.getRequestor().getId(),
+                LocalDateTime.ofInstant(ir.getCreated(), ZoneOffset.UTC));
     }
 
 

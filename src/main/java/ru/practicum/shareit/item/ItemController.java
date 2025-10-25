@@ -35,7 +35,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getOwnerItems(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
+    public List<ItemWithBookingDto> getOwnerItems(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
         return service.getOwnerItems(ownerId);
     }
 

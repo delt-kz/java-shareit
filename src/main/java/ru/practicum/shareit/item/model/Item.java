@@ -15,6 +15,7 @@ import java.util.Objects;
 @Getter @Setter @ToString
 public class Item {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "owner_id")

@@ -9,13 +9,12 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    List<Item> findAllByOwnerId(Long ownerId);
+    List<Item> findAllByOwnerId(long id);
 
     @Query("""
             SELECT i FROM Item i
-            WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :text, '%'))
-               OR LOWER(i.description) LIKE LOWER(CONCAT('%', :text, '%'))
+            WHERE available = true AND (LOWER(i.name) LIKE LOWER(CONCAT('%', :text, '%'))
+               OR LOWER(i.description) LIKE LOWER(CONCAT('%', :text, '%')))
             """)
     List<Item> searchByText(@Param("text") String text);
-
 }

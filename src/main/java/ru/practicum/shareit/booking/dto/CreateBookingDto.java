@@ -5,19 +5,21 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.aspectj.lang.annotation.After;
 import ru.practicum.shareit.booking.BookingStatus;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateBookingDto {
     @NotNull
-    private Long booker_id;
+    private Long itemId;
     @NotNull
     @Future
-    private Instant start;
-    private Instant end;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private BookingStatus status;
 }

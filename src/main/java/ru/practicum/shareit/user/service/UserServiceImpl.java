@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto update(Long userId, CreateUserDto patch) {
+    public UserDto update(Long userId, UserDto patch) {
         User existing = userRepo.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
 

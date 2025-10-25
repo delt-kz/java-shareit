@@ -24,6 +24,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto create(CreateItemDto dto, Long ownerId) {
         Item item = ItemMapper.fromCreate(dto, ownerId);
+        if (!userRepo.existsById(ownerId)) {
+            throw new NotFoundException("Пользователь не найден: " + ownerId);
+        }
         return ItemMapper.toDto(itemRepo.save(item));
     }
 
@@ -50,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getOwnerItems(Long ownerId) {
         if (!userRepo.existsById(ownerId)) {
-            throw new NotFoundException("Вещь не найдена: " + ownerId);
+            throw new NotFoundException("Пользователь не найден: " + ownerId);
         }
         return ItemMapper.toDto(itemRepo.findAllByOwnerId(ownerId));
     }

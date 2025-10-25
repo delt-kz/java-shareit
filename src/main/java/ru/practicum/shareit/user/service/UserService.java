@@ -13,7 +13,7 @@ public interface UserService {
     UserDto create(CreateUserDto dto);
 
     @Transactional
-    UserDto update(Long userId, CreateUserDto patch);
+    UserDto update(Long userId, UserDto patch);
 
     UserDto getById(Long userId);
 

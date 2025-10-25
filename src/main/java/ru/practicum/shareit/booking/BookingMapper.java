@@ -4,41 +4,42 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingMapper {
 
     public static BookingDto toDto(Booking booking) {
-//        String start = DateTimeFormatter.ISO_INSTANT
-//                .format(booking.getStart());
         return new BookingDto(booking.getId(),
-                booking.getBooker().getId(),
-                booking.getStart(),
-                booking.getEnd(),
+                booking.getBooker(),
+                booking.getItem(),
+                LocalDateTime.ofInstant(booking.getStart(), ZoneOffset.UTC),
+                LocalDateTime.ofInstant(booking.getEnd(), ZoneOffset.UTC),
                 booking.getStatus());
     }
 
-    public static Booking toBooking(BookingDto dto) {
+    public static Booking fromCreate(CreateBookingDto dto, Item item, User booker) {
         Booking booking = new Booking();
-        booking.setId(dto.getId());
-        User booker = new User();
-        booker.setId(dto.getBooker_id());
         booking.setBooker(booker);
-        booking.setStart(booking.getStart());
-        booking.setEnd(booking.getEnd());
-        booking.setStatus(dto.getStatus());
+        booking.setItem(item);
+        booking.setStart(dto.getStart().toInstant(ZoneOffset.UTC));
+        booking.setEnd(dto.getEnd().toInstant(ZoneOffset.UTC));
         return booking;
     }
 
-    public static Booking fromCreate(CreateBookingDto dto) {
-        Booking booking = new Booking();
-        User booker = new User();
-        booker.setId(dto.getBooker_id());
-        booking.setBooker(booker);
-        booking.setStart(booking.getStart());
-        booking.setEnd(booking.getEnd());
-        booking.setStatus(dto.getStatus());
-        return booking;
+    public static List<BookingDto> toDto(List<Booking> bookings) {
+        List<BookingDto> result = new ArrayList<>();
+
+        for (Booking booking : bookings) {
+            result.add(toDto(booking));
+        }
+
+        return result;
     }
 }

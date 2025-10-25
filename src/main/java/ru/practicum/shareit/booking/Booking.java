@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.Instant;
@@ -12,18 +13,24 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "booking")
+@Table(name = "bookings")
 @Getter @Setter @ToString
 public class Booking {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "booker_id")
     private User booker;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id")
+    private Item item;
+    @Column(name = "start_date")
     private Instant start;
+    @Column(name = "end_date")
     private Instant end;
     @Enumerated(EnumType.STRING)
-    private BookingStatus status;
+    private BookingStatus status = BookingStatus.WAITING;
 
 
     @Override
