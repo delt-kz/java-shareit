@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.mapping.Join;
 import ru.practicum.shareit.user.User;
 
 import java.time.Instant;
@@ -12,7 +11,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "comments")
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

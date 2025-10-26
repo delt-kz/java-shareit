@@ -1,19 +1,19 @@
 package ru.practicum.shareit.request;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.shareit.user.User;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "requests")
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
