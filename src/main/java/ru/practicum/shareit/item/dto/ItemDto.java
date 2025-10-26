@@ -6,10 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class ItemDto {
     private Long id;
     private String name;
@@ -17,4 +18,14 @@ public class ItemDto {
     private Boolean available;
     private Long owner;
     private Long requestId;
+    private List<CommentDto> comments;
+
+    public ItemDto(Long id, String name, String description, Boolean available, Long owner, Long requestId) {
+        this.id = id;
+        this.requestId = requestId;
+        this.owner = owner;
+        this.available = available;
+        this.description = description;
+        this.name = name;
+    }
 }

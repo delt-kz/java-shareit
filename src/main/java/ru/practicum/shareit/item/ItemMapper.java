@@ -2,8 +2,10 @@ package ru.practicum.shareit.item;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
 import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
@@ -41,7 +43,7 @@ public class ItemMapper {
             newItem.setAvailable(oldItem.getAvailable());
         }
         newItem.setId(oldItem.getId());
-        newItem.setRequest(oldItem.getRequest());
+        newItem.setRequest(oldItem.getRequest() != null ? oldItem.getRequest() : null);
         newItem.setOwner(oldItem.getOwner());
         return newItem;
     }
