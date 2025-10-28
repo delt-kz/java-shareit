@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -27,14 +28,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepo;
     private final UserRepository userRepo;
     private final CommentRepository commentRepo;
     private final BookingRepository bookingRepo;
 
-
     @Override
+    @Transactional
     public ItemDto create(CreateItemDto dto, Long ownerId) {
         Item item = ItemMapper.fromCreate(dto, ownerId);
         if (!userRepo.existsById(ownerId)) {
@@ -44,6 +46,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto update(CreateItemDto patch, Long ownerId, Long itemId) {
         Item existing = itemRepo.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена: " + itemId));
@@ -117,18 +120,15 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toDto(itemRepo.searchByText(text));
     }
 
+    @Override
+    @Transactional
     public CommentDto createComment(CommentDto dto, Long userId, Long itemId) {
-        if (!userRepo.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден");
-        }
-        if (!itemRepo.existsById(itemId)) {
-            throw new NotFoundException("Вещь не найдена");
-        }
-
+        Item item = itemRepo.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
         User author = userRepo.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        Comment comment = CommentMapper.fromDto(dto, userId, itemId);
+        Comment comment = CommentMapper.fromDto(dto, author, item);
         if (!commentRepo.hasUserBookedItem(userId, itemId)) {
             throw new ValidationException("Пользователь не может оставить отзыв на вещь, которую не арендовал: " + itemId);
         }

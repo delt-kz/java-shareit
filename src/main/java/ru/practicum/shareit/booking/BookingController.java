@@ -17,15 +17,15 @@ public class BookingController {
 
     @PostMapping
     public BookingDto create(@RequestBody @Valid CreateBookingDto dto,
-                             @RequestHeader("X-Sharer-User-Id") Long ownerId) {
-        return service.create(dto, ownerId);
+                             @RequestHeader("X-Sharer-User-Id") Long bookerId) {
+        return service.create(dto, bookerId);
     }
 
     @PatchMapping("/{bookingId}")
     public BookingDto approve(@PathVariable Long bookingId,
-                              @RequestHeader("X-Sharer-User-Id") Long ownerId,
+                              @RequestHeader("X-Sharer-User-Id") Long bookerId,
                               @RequestParam Boolean approved) {
-        return service.approve(bookingId, ownerId, approved);
+        return service.approve(bookingId, bookerId, approved);
     }
 
     @GetMapping("/{bookingId}")
@@ -41,9 +41,9 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public List<BookingDto> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+    public List<BookingDto> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long bookerId,
                                              @RequestParam(value = "state", required = false, defaultValue = "ALL") BookingState state) {
-        return service.getBookingByOwnerAndState(ownerId, state);
+        return service.getBookingByOwnerAndState(bookerId, state);
     }
 
 }

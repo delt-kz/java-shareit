@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
@@ -15,21 +16,27 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepo;
     private final ItemRepository itemRepo;
     private final UserRepository userRepo;
 
-
-
-    public BookingDto create(CreateBookingDto dto, Long ownerId) {
-        User booker = userRepo.findById(ownerId)
+    @Override
+    @Transactional
+    public BookingDto create(CreateBookingDto dto, Long bookerId) {
+        User booker = userRepo.findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = itemRepo.findById(dto.getItemId())
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
+
+        if (Objects.equals(item.getOwner().getId(), bookerId)) {
+            throw new ForbiddenException("Нельзя бронировать свои вещи");
+        }
 
         if (!item.getAvailable()) {
             throw new ValidationException("Вещь в статусе не доступен: " + item.getId());
@@ -45,6 +52,9 @@ public class BookingServiceImpl implements BookingService {
 
     }
 
+
+    @Override
+    @Transactional
     public BookingDto approve(long bookingId, long ownerId, boolean approved) {
         Booking booking = bookingRepo.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронь не найден " + bookingId));
@@ -55,6 +65,7 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toDto(bookingRepo.save(booking));
     }
 
+    @Override
     public BookingDto getBookingById(long bookingId, long userId) {
         if (!userRepo.existsById(userId)) {
             throw new NotFoundException("Пользователь не найден: " + userId);
@@ -68,6 +79,7 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toDto(booking);
     }
 
+    @Override
     public List<BookingDto> getBookingByBookerAndState(long bookerId, BookingState state) {
         if (!userRepo.existsById(bookerId)) {
             throw new NotFoundException("Пользователь не найден: " + bookerId);
@@ -75,6 +87,7 @@ public class BookingServiceImpl implements BookingService {
         return getBookings(bookerId, state, false);
     }
 
+    @Override
     public List<BookingDto> getBookingByOwnerAndState(long ownerId, BookingState state) {
         if (!userRepo.existsById(ownerId)) {
             throw new NotFoundException("Пользователь не найден: " + ownerId);
@@ -101,12 +114,12 @@ public class BookingServiceImpl implements BookingService {
                     : bookingRepo.findAllByBookerIdAndStateFuture(userId);
 
             case WAITING -> isOwner
-                    ? bookingRepo.findAllByItemOwnerIdAndStateWaiting(userId)
-                    : bookingRepo.findAllByBookerIdAndStateWaiting(userId);
+                    ? bookingRepo.findAllByItemOwnerIdAndStatus(userId, BookingStatus.WAITING)
+                    : bookingRepo.findAllByBookerIdAndStatus(userId, BookingStatus.WAITING);
 
             case REJECTED -> isOwner
-                    ? bookingRepo.findAllByItemOwnerIdAndStateRejected(userId)
-                    : bookingRepo.findAllByBookerIdAndStateRejected(userId);
+                    ? bookingRepo.findAllByItemOwnerIdAndStatus(userId, BookingStatus.REJECTED)
+                    : bookingRepo.findAllByBookerIdAndStatus(userId, BookingStatus.REJECTED);
 
             default -> throw new NotFoundException("Неизвестное состояние: " + state);
         };

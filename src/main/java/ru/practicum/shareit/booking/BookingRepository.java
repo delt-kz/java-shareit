@@ -92,18 +92,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("""
             SELECT b FROM Booking b
             WHERE b.booker.id = :bookerId
-              AND b.status = 'WAITING'
+              AND b.status = :status
             ORDER BY b.start DESC
             """)
-    List<Booking> findAllByBookerIdAndStateWaiting(long bookerId);
-
-    @Query("""
-            SELECT b FROM Booking b
-            WHERE b.booker.id = :bookerId
-              AND b.status = 'REJECTED'
-            ORDER BY b.start DESC
-            """)
-    List<Booking> findAllByBookerIdAndStateRejected(long bookerId);
+    List<Booking> findAllByBookerIdAndStatus(long bookerId, BookingStatus status);
 
     List<Booking> findAllByItemOwnerIdOrderByStartDesc(long ownerId);
 
@@ -135,16 +127,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("""
             SELECT b FROM Booking b
             WHERE b.item.owner.id = :ownerId
-              AND b.status = 'WAITING'
+              AND b.status = :status
             ORDER BY b.start DESC
             """)
-    List<Booking> findAllByItemOwnerIdAndStateWaiting(long ownerId);
-
-    @Query("""
-            SELECT b FROM Booking b
-            WHERE b.item.owner.id = :ownerId
-              AND b.status = 'REJECTED'
-            ORDER BY b.start DESC
-            """)
-    List<Booking> findAllByItemOwnerIdAndStateRejected(long ownerId);
+    List<Booking> findAllByItemOwnerIdAndStatus(long ownerId, BookingStatus status);
 }

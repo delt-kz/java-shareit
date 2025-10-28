@@ -15,14 +15,10 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommentMapper {
 
-    public static Comment fromDto(CommentDto dto, Long userId, Long itemId) {
+    public static Comment fromDto(CommentDto dto, User author, Item item) {
         Comment comment = new Comment();
         comment.setText(dto.getText());
-        User user = new User();
-        user.setId(userId);
-        comment.setAuthor(user);
-        Item item = new Item();
-        item.setId(itemId);
+        comment.setAuthor(author);
         comment.setItem(item);
         return comment;
     }

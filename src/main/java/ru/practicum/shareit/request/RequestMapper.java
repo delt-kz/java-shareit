@@ -22,11 +22,9 @@ public class RequestMapper {
     }
 
 
-    public static ItemRequest fromCreate(CreateItemRequestDto dto, long requestorId) {
+    public static ItemRequest fromCreate(CreateItemRequestDto dto, User requestor) {
         ItemRequest itemRequest = new ItemRequest();
         itemRequest.setDescription(dto.getDescription());
-        User requestor = new User();
-        requestor.setId(requestorId);
         itemRequest.setRequestor(requestor);
         return itemRequest;
     }
