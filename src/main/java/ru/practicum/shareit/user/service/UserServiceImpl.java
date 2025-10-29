@@ -2,64 +2,70 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.common.exception.ConflictException;
 import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
-import ru.practicum.shareit.user.UserStorage;
+import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
-    private final UserStorage repository;
+    private final UserRepository userRepo;
+
 
     @Override
-    public UserDto create(UserDto dto) {
-        if (repository.existsByEmail(dto.getEmail())) {
+    @Transactional
+    public UserDto create(CreateUserDto dto) {
+        if (userRepo.existsByEmail(dto.getEmail())) {
             throw new ConflictException("Email уже существует: " + dto.getEmail());
         }
-        User user = UserMapper.mapToUser(dto);
-        return UserMapper.mapToUserDto(repository.save(user));
+        User user = UserMapper.fromCreate(dto);
+        return UserMapper.toDto(userRepo.save(user));
     }
 
     @Override
+    @Transactional
     public UserDto update(Long userId, UserDto patch) {
-        User existing = repository.findById(userId)
+        User existing = userRepo.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
 
         String newEmail = patch.getEmail();
-        repository.findByEmail(newEmail)
+        userRepo.findByEmail(newEmail)
                 .filter(u -> !u.getId().equals(userId))
                 .ifPresent(u -> {
                     throw new ConflictException("Email уже существует: " + newEmail);
                 });
-        UserMapper.mapFromUpdate(patch, existing);
+        User newUser = UserMapper.fromUpdate(patch, existing);
 
-        return UserMapper.mapToUserDto(repository.save(existing));
+        return UserMapper.toDto(userRepo.save(newUser));
     }
 
     @Override
     public UserDto getById(Long userId) {
-        return repository.findById(userId)
-                .map(UserMapper::mapToUserDto)
+        return userRepo.findById(userId)
+                .map(UserMapper::toDto)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
     }
 
     @Override
     public List<UserDto> getAll() {
-        return repository.findAll().stream().map(UserMapper::mapToUserDto).collect(Collectors.toList());
+        return UserMapper.toDto(userRepo.findAll());
     }
 
     @Override
+    @Transactional
     public void delete(Long userId) {
-        if (!repository.existsById(userId)) {
+        if (!userRepo.existsById(userId)) {
             throw new NotFoundException("Пользователь не найден: " + userId);
         }
-        repository.deleteById(userId);
+        userRepo.deleteById(userId);
     }
 }

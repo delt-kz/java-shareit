@@ -2,64 +2,61 @@ package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.common.exception.NotFoundException;
-import ru.practicum.shareit.request.*;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.RequestMapper;
+import ru.practicum.shareit.request.dto.CreateItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserStorage;
+import ru.practicum.shareit.user.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ItemRequestServiceImpl implements ItemRequestService {
 
-    private final ItemRequestStorage repository;
-    private final UserStorage userRepository;
+    private final ItemRequestRepository requestRepo;
+    private final UserRepository userRepo;
 
     @Override
-    public ItemRequestDto create(ItemRequestDto dto, Long requestorId) {
-        User requestor = userRepository.findById(requestorId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + requestorId));
+    @Transactional
+    public ItemRequestDto create(CreateItemRequestDto dto, Long requestorId) {
+        User requestor = userRepo.findById(requestorId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        ItemRequest request = ItemRequestMapper.mapToItemRequest(dto);
-        request.setRequestor(requestor);
-        request.setCreated(LocalDateTime.now());
-        return ItemRequestMapper.mapToItemRequestDto(repository.save(request));
+        ItemRequest request = RequestMapper.fromCreate(dto, requestor);
+        return RequestMapper.toDto(requestRepo.save(request));
     }
 
     @Override
-    public ItemRequestDto getById(Long requestId, Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден: " + userId);
+    public ItemRequestDto getById(Long requestId, Long requestorId) {
+        if (!userRepo.existsById(requestorId)) {
+            throw new NotFoundException("Пользователь не найден: " + requestorId);
         }
 
-        ItemRequest request = repository.findById(requestId)
+        ItemRequest request = requestRepo.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Заявка не найдена: " + requestId));
 
-        return ItemRequestMapper.mapToItemRequestDto(request);
+        return RequestMapper.toDto(request);
     }
 
     @Override
-    public List<ItemRequestDto> getUserRequests(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден: " + userId);
+    public List<ItemRequestDto> getUserRequests(Long requestorId) {
+        if (!userRepo.existsById(requestorId)) {
+            throw new NotFoundException("Пользователь не найден: " + requestorId);
         }
-        return repository.findAllByRequestorId(userId).stream()
-                .map(ItemRequestMapper::mapToItemRequestDto)
-                .collect(Collectors.toList());
+        return RequestMapper.toDto(requestRepo.findAllByRequestorId(requestorId));
     }
 
     @Override
-    public List<ItemRequestDto> getAll(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден: " + userId);
+    public List<ItemRequestDto> getAll(Long requestorId) {
+        if (!userRepo.existsById(requestorId)) {
+            throw new NotFoundException("Пользователь не найден: " + requestorId);
         }
-        return repository.findAll().stream()
-                .filter(r -> !r.getRequestor().getId().equals(userId))
-                .map(ItemRequestMapper::mapToItemRequestDto)
-                .collect(Collectors.toList());
+        return RequestMapper.toDto(requestRepo.findAllByRequestorIdIsNot(requestorId));
     }
 }
