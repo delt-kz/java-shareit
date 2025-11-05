@@ -2,8 +2,10 @@ package ru.practicum.shareit.request;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.item.dto.ItemShortDto;
 import ru.practicum.shareit.request.dto.CreateItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestWithAnswerDto;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -22,13 +24,6 @@ public class RequestMapper {
     }
 
 
-    public static ItemRequest fromCreate(CreateItemRequestDto dto, User requestor) {
-        ItemRequest itemRequest = new ItemRequest();
-        itemRequest.setDescription(dto.getDescription());
-        itemRequest.setRequestor(requestor);
-        return itemRequest;
-    }
-
     public static List<ItemRequestDto> toDto(List<ItemRequest> irs) {
         List<ItemRequestDto> result = new ArrayList<>();
 
@@ -38,4 +33,20 @@ public class RequestMapper {
 
         return result;
     }
+
+    public static ItemRequest fromCreate(CreateItemRequestDto dto, User requestor) {
+        ItemRequest itemRequest = new ItemRequest();
+        itemRequest.setDescription(dto.getDescription());
+        itemRequest.setRequestor(requestor);
+        return itemRequest;
+    }
+
+    public static ItemRequestWithAnswerDto toAnswerDto(ItemRequest ir, List<ItemShortDto> answers) {
+        return new ItemRequestWithAnswerDto(ir.getId(),
+                ir.getDescription(),
+                ir.getRequestor().getId(),
+                LocalDateTime.ofInstant(ir.getCreated(), ZoneOffset.UTC),
+                answers);
+    }
+
 }

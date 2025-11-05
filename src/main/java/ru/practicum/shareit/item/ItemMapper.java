@@ -3,10 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CreateItemDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemWithBookingDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
@@ -24,6 +21,16 @@ public class ItemMapper {
                 item.getAvailable(),
                 item.getOwner().getId(),
                 item.getRequest() != null ? item.getRequest().getId() : null);
+    }
+
+    public static List<ItemDto> toDto(Iterable<Item> items) {
+        List<ItemDto> result = new ArrayList<>();
+
+        for (Item item : items) {
+            result.add(toDto(item));
+        }
+
+        return result;
     }
 
     public static Item fromUpdate(CreateItemDto patch, Item oldItem) {
@@ -66,16 +73,6 @@ public class ItemMapper {
         return item;
     }
 
-    public static List<ItemDto> toDto(Iterable<Item> items) {
-        List<ItemDto> result = new ArrayList<>();
-
-        for (Item item : items) {
-            result.add(toDto(item));
-        }
-
-        return result;
-    }
-
     public static ItemWithBookingDto toDtoWithBooking(Item item, List<CommentDto> commentDtos, BookingDto lastBooking, BookingDto nextBooking) {
         return new ItemWithBookingDto(item.getId(),
                 item.getName(),
@@ -86,5 +83,19 @@ public class ItemMapper {
                 lastBooking,
                 nextBooking,
                 commentDtos);
+    }
+
+    public static ItemShortDto toShortDto(Item item) {
+        return new ItemShortDto(item.getId(), item.getId(), item.getName(), item.getOwner().getId());
+    }
+
+    public static List<ItemShortDto> toShortDto(List<Item> items) {
+        List<ItemShortDto> result = new ArrayList<>();
+
+        for (Item item : items) {
+            result.add(toShortDto(item));
+        }
+
+        return result;
     }
 }

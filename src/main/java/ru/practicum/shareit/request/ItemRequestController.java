@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.CreateItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestWithAnswerDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
 import java.util.List;
@@ -25,15 +26,8 @@ public class ItemRequestController {
         return service.create(dto, requestorId);
     }
 
-    @GetMapping("/{requestId}")
-    public ItemRequestDto getById(
-            @RequestHeader("X-Sharer-User-Id") Long requestorId,
-            @PathVariable Long requestId) {
-        return service.getById(requestId, requestorId);
-    }
-
     @GetMapping
-    public List<ItemRequestDto> getUserRequests(
+    public List<ItemRequestWithAnswerDto> getUserRequests(
             @RequestHeader("X-Sharer-User-Id") Long requestorId) {
         return service.getUserRequests(requestorId);
     }
@@ -42,5 +36,12 @@ public class ItemRequestController {
     public List<ItemRequestDto> getAll(
             @RequestHeader("X-Sharer-User-Id") Long requestorId) {
         return service.getAll(requestorId);
+    }
+
+    @GetMapping("/{requestId}")
+    public ItemRequestWithAnswerDto getById(
+            @RequestHeader("X-Sharer-User-Id") Long requestorId,
+            @PathVariable Long requestId) {
+        return service.getById(requestId, requestorId);
     }
 }

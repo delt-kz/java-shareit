@@ -41,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()) {
             throw new ValidationException("Вещь в статусе не доступен: " + item.getId());
         }
-        //нужно разобраться почему JOIN FETCH не работает
+
         Booking booking = BookingMapper.fromCreate(dto, item, booker);
 
         if (!booking.getStart().isBefore(booking.getEnd())) {
