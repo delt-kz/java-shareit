@@ -2,8 +2,8 @@ package ru.practicum.shareit.booking;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.CreateBookingDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingMapper {
 
-    public static BookingDto toDto(Booking booking) {
-        return new BookingDto(booking.getId(),
+    public static BookingResponseDto toDto(Booking booking) {
+        return new BookingResponseDto(booking.getId(),
                 booking.getBooker(),
                 booking.getItem(),
                 LocalDateTime.ofInstant(booking.getStart(), ZoneOffset.UTC),
@@ -24,7 +24,7 @@ public class BookingMapper {
                 booking.getStatus());
     }
 
-    public static Booking fromCreate(CreateBookingDto dto, Item item, User booker) {
+    public static Booking fromCreate(BookingRequestDto dto, Item item, User booker) {
         Booking booking = new Booking();
         booking.setBooker(booker);
         booking.setItem(item);
@@ -33,8 +33,8 @@ public class BookingMapper {
         return booking;
     }
 
-    public static List<BookingDto> toDto(List<Booking> bookings) {
-        List<BookingDto> result = new ArrayList<>();
+    public static List<BookingResponseDto> toDto(List<Booking> bookings) {
+        List<BookingResponseDto> result = new ArrayList<>();
 
         for (Booking booking : bookings) {
             result.add(toDto(booking));

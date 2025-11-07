@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.*;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.CreateBookingDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.common.exception.ForbiddenException;
 import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.common.exception.ValidationException;
@@ -28,7 +28,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto create(CreateBookingDto dto, Long bookerId) {
+    public BookingResponseDto create(BookingRequestDto dto, Long bookerId) {
         User booker = userRepo.findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = itemRepo.findById(dto.getItemId())
@@ -55,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto approve(long bookingId, long ownerId, boolean approved) {
+    public BookingResponseDto approve(long bookingId, long ownerId, boolean approved) {
         Booking booking = bookingRepo.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронь не найден " + bookingId));
         if (booking.getItem().getOwner().getId() != ownerId) {
@@ -66,7 +66,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDto getBookingById(long bookingId, long userId) {
+    public BookingResponseDto getBookingById(long bookingId, long userId) {
         if (!userRepo.existsById(userId)) {
             throw new NotFoundException("Пользователь не найден: " + userId);
         }
@@ -80,7 +80,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingByBookerAndState(long bookerId, BookingState state) {
+    public List<BookingResponseDto> getBookingByBookerAndState(long bookerId, BookingState state) {
         if (!userRepo.existsById(bookerId)) {
             throw new NotFoundException("Пользователь не найден: " + bookerId);
         }
@@ -88,14 +88,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingByOwnerAndState(long ownerId, BookingState state) {
+    public List<BookingResponseDto> getBookingByOwnerAndState(long ownerId, BookingState state) {
         if (!userRepo.existsById(ownerId)) {
             throw new NotFoundException("Пользователь не найден: " + ownerId);
         }
         return getBookings(ownerId, state, true);
     }
 
-    private List<BookingDto> getBookings(long userId, BookingState state, boolean isOwner) {
+    private List<BookingResponseDto> getBookings(long userId, BookingState state, boolean isOwner) {
         List<Booking> bookings = switch (state) {
             case ALL -> isOwner
                     ? bookingRepo.findAllByItemOwnerIdOrderByStartDesc(userId)

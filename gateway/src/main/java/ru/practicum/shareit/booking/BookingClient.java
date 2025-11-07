@@ -50,4 +50,8 @@ public class BookingClient extends BaseClient {
     public ResponseEntity<Object> getBooking(long userId, Long bookingId) {
         return get("/" + bookingId, userId);
     }
+
+    public ResponseEntity<Object> approve(long bookingId, long bookerId, boolean approved) {
+        return patch("/" + bookingId, bookerId, approved);
+    }
 }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.common.exception.ForbiddenException;
 import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.common.exception.ValidationException;
@@ -89,12 +89,12 @@ public class ItemServiceImpl implements ItemService {
         List<Item> items = itemRepo.findAllByOwnerId(ownerId);
         List<Long> itemIds = items.stream().map(Item::getId).toList();
 
-        Map<Long, BookingDto> lastBookings = bookingRepo.findAllLastBookingsByItemIdIn(itemIds)
+        Map<Long, BookingResponseDto> lastBookings = bookingRepo.findAllLastBookingsByItemIdIn(itemIds)
                 .stream()
                 .map(BookingMapper::toDto)
                 .collect(Collectors.toMap(b -> b.getItem().getId(), b -> b));
 
-        Map<Long, BookingDto> nextBookings = bookingRepo.findAllNextBookingsByItemIdIn(itemIds)
+        Map<Long, BookingResponseDto> nextBookings = bookingRepo.findAllNextBookingsByItemIdIn(itemIds)
                 .stream()
                 .map(BookingMapper::toDto)
                 .collect(Collectors.toMap(b -> b.getItem().getId(), b -> b));
@@ -107,8 +107,8 @@ public class ItemServiceImpl implements ItemService {
         return items.stream()
                 .map(item -> {
                     List<CommentDto> comments = commentsByItemId.getOrDefault(item.getId(), List.of());
-                    BookingDto last = lastBookings.get(item.getId());
-                    BookingDto next = nextBookings.get(item.getId());
+                    BookingResponseDto last = lastBookings.get(item.getId());
+                    BookingResponseDto next = nextBookings.get(item.getId());
                     return ItemMapper.toDtoWithBooking(item, comments, last, next);
                 })
                 .toList();
