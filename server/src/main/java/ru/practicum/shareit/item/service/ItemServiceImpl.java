@@ -14,11 +14,12 @@ import ru.practicum.shareit.item.CommentRepository;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CreateItemDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -34,20 +35,23 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepo;
     private final CommentRepository commentRepo;
     private final BookingRepository bookingRepo;
+    private final ItemRequestRepository requestRepo;
 
     @Override
     @Transactional
-    public ItemDto create(CreateItemDto dto, Long ownerId) {
-        Item item = ItemMapper.fromCreate(dto, ownerId);
-        if (!userRepo.existsById(ownerId)) {
-            throw new NotFoundException("Пользователь не найден: " + ownerId);
+    public ItemResponseDto create(ItemRequestDto dto, Long ownerId) {
+        User user = userRepo.findById(ownerId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + ownerId));
+        if (dto.getRequestId() != null && !requestRepo.existsById(dto.getRequestId())) {
+            throw new NotFoundException("Заявка не найдена: " + dto.getRequestId());
         }
+        Item item = ItemMapper.fromCreate(dto, user);
         return ItemMapper.toDto(itemRepo.save(item));
     }
 
     @Override
     @Transactional
-    public ItemDto update(CreateItemDto patch, Long ownerId, Long itemId) {
+    public ItemResponseDto update(ItemRequestDto patch, Long ownerId, Long itemId) {
         Item existing = itemRepo.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена: " + itemId));
 
@@ -115,7 +119,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemResponseDto> search(String text) {
         if (text == null || text.isBlank()) return List.of();
         return ItemMapper.toDto(itemRepo.searchByText(text));
     }

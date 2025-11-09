@@ -2,8 +2,8 @@ package ru.practicum.shareit.user;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.user.dto.CreateUserDto;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserRequestDto;
+import ru.practicum.shareit.user.dto.UserResponseDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +11,13 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
 
-    public static UserDto toDto(User user) {
-        return new UserDto(user.getId(),
+    public static UserResponseDto toDto(User user) {
+        return new UserResponseDto(user.getId(),
                 user.getName(),
                 user.getEmail());
     }
 
-    public static User fromUpdate(UserDto patch, User oldUser) {
+    public static User fromUpdate(UserResponseDto patch, User oldUser) {
         User newUser = new User();
         if (patch.getEmail() != null) {
             newUser.setEmail(patch.getEmail());
@@ -33,15 +33,15 @@ public class UserMapper {
         return newUser;
     }
 
-    public static User fromCreate(CreateUserDto dto) {
+    public static User fromCreate(UserRequestDto dto) {
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         return user;
     }
 
-    public static List<UserDto> toDto(List<User> users) {
-        List<UserDto> result = new ArrayList<>();
+    public static List<UserResponseDto> toDto(List<User> users) {
+        List<UserResponseDto> result = new ArrayList<>();
 
         for (User user : users) {
             result.add(toDto(user));

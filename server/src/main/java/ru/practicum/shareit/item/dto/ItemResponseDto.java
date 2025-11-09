@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemDto {
+public class ItemResponseDto {
     private Long id;
     private String name;
     private String description;
@@ -19,7 +19,7 @@ public class ItemDto {
     private Long requestId;
     private List<CommentDto> comments;
 
-    public ItemDto(Long id, String name, String description, Boolean available, Long owner, Long requestId) {
+    public ItemResponseDto(Long id, String name, String description, Boolean available, Long owner, Long requestId) {
         this.id = id;
         this.requestId = requestId;
         this.owner = owner;

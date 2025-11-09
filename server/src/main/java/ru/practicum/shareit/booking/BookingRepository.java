@@ -60,7 +60,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("""
             UPDATE Booking b SET b.status = :status WHERE b.id = :id
             """)
-    int updateStatus(@Param("status") BookingStatus status, @Param("id") long id);
+    int updateStatus(BookingStatus status, long id);
 
     List<Booking> findAllByBookerIdOrderByStartDesc(long bookerId);
 

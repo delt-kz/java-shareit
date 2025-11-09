@@ -22,7 +22,7 @@ public class ItemRequest {
     @ManyToOne
     @JoinColumn(name = "requestor_id")
     private User requestor;
-    private Instant created;
+    private Instant created = Instant.now();
 
     @Override
     public boolean equals(Object o) {

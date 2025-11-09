@@ -10,7 +10,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
-import ru.practicum.shareit.booking.dto.BookItemRequestDto;
+import ru.practicum.shareit.booking.dto.BookItemDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.client.BaseClient;
 
@@ -43,7 +43,7 @@ public class BookingClient extends BaseClient {
     }
 
 
-    public ResponseEntity<Object> bookItem(long userId, BookItemRequestDto requestDto) {
+    public ResponseEntity<Object> bookItem(long userId, BookItemDto requestDto) {
         return post("", userId, requestDto);
     }
 
@@ -52,6 +52,7 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> approve(long bookingId, long bookerId, boolean approved) {
-        return patch("/" + bookingId, bookerId, approved);
+        return patch("/" + bookingId + "?approved=" + approved, bookerId, null);
     }
+
 }

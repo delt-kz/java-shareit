@@ -1,11 +1,11 @@
 package ru.practicum.shareit.request;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.request.dto.CreateItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
+import ru.practicum.shareit.request.dto.ItemRequestWithAnswerResponseDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
 import java.util.List;
@@ -19,28 +19,28 @@ public class ItemRequestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemRequestDto create(
+    public ItemRequestResponseDto create(
             @RequestHeader("X-Sharer-User-Id") Long requestorId,
-            @RequestBody @Valid CreateItemRequestDto dto) {
+            @RequestBody ItemRequestRequestDto dto) {
         return service.create(dto, requestorId);
     }
 
-    @GetMapping("/{requestId}")
-    public ItemRequestDto getById(
-            @RequestHeader("X-Sharer-User-Id") Long requestorId,
-            @PathVariable Long requestId) {
-        return service.getById(requestId, requestorId);
-    }
-
     @GetMapping
-    public List<ItemRequestDto> getUserRequests(
+    public List<ItemRequestWithAnswerResponseDto> getUserRequests(
             @RequestHeader("X-Sharer-User-Id") Long requestorId) {
         return service.getUserRequests(requestorId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> getAll(
+    public List<ItemRequestResponseDto> getAll(
             @RequestHeader("X-Sharer-User-Id") Long requestorId) {
         return service.getAll(requestorId);
+    }
+
+    @GetMapping("/{requestId}")
+    public ItemRequestWithAnswerResponseDto getById(
+            @RequestHeader("X-Sharer-User-Id") Long requestorId,
+            @PathVariable Long requestId) {
+        return service.getById(requestId, requestorId);
     }
 }

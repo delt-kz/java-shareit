@@ -8,8 +8,8 @@ import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.dto.CreateUserDto;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserRequestDto;
+import ru.practicum.shareit.user.dto.UserResponseDto;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto create(CreateUserDto dto) {
+    public UserResponseDto create(UserRequestDto dto) {
         if (userRepo.existsByEmail(dto.getEmail())) {
             throw new ConflictException("Email уже существует: " + dto.getEmail());
         }
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto update(Long userId, UserDto patch) {
+    public UserResponseDto update(Long userId, UserResponseDto patch) {
         User existing = userRepo.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
 
@@ -49,14 +49,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getById(Long userId) {
+    public UserResponseDto getById(Long userId) {
         return userRepo.findById(userId)
                 .map(UserMapper::toDto)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
     }
 
     @Override
-    public List<UserDto> getAll() {
+    public List<UserResponseDto> getAll() {
         return UserMapper.toDto(userRepo.findAll());
     }
 

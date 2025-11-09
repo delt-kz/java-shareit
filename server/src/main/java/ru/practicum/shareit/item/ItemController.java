@@ -3,8 +3,8 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CreateItemDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -17,15 +17,15 @@ public class ItemController {
     private final ItemService service;
 
     @PostMapping
-    public ItemDto create(@RequestBody @Valid CreateItemDto dto,
-                          @RequestHeader("X-Sharer-User-Id") Long ownerId) {
+    public ItemResponseDto create(@RequestBody ItemRequestDto dto,
+                                  @RequestHeader("X-Sharer-User-Id") Long ownerId) {
         return service.create(dto, ownerId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@PathVariable Long itemId,
-                          @RequestBody CreateItemDto patch,
-                          @RequestHeader("X-Sharer-User-Id") Long ownerId) {
+    public ItemResponseDto update(@PathVariable Long itemId,
+                                  @RequestBody ItemRequestDto patch,
+                                  @RequestHeader("X-Sharer-User-Id") Long ownerId) {
         return service.update(patch, ownerId, itemId);
     }
 
@@ -41,12 +41,12 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam("text") String text) {
+    public List<ItemResponseDto> search(@RequestParam("text") String text) {
         return service.search(text);
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@RequestBody @Valid CommentDto dto,
+    public CommentDto createComment(@RequestBody CommentDto dto,
                                     @RequestHeader("X-Sharer-User-Id") Long userId,
                                     @PathVariable Long itemId) {
         return service.createComment(dto, userId, itemId);
