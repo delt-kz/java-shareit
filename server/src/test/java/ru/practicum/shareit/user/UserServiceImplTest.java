@@ -1,4 +1,4 @@
-package ru.practicum.shareit;
+package ru.practicum.shareit.user;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.service.UserService;
@@ -29,7 +28,7 @@ public class UserServiceImplTest {
     private final UserService service;
 
     @Test
-    void saveNewUser() throws Exception {
+    void saveNewUser() {
         UserRequestDto userDto = new UserRequestDto("John", "gmail@gmail.com");
 
         service.create(userDto);
@@ -43,7 +42,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void updateUser() throws Exception {
+    void updateUser() {
         UserRequestDto userDto = new UserRequestDto("John", "gmail@gmail.com");
         service.create(userDto);
         TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
