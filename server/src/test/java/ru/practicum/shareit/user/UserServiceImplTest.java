@@ -59,7 +59,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void getUserById() throws Exception {
+    void getUserById() {
         UserRequestDto userDto = new UserRequestDto("John", "gmail@gmail.com");
 
         service.create(userDto);
@@ -102,10 +102,8 @@ public class UserServiceImplTest {
 
         service.delete(user.getId());
 
-        assertThrows(NoResultException.class, () -> {
-            em.createQuery("SELECT u FROM User u WHERE u.id = :id", User.class)
-                    .setParameter("id", user.getId())
-                    .getSingleResult();
-        });
+        assertThrows(NoResultException.class, () -> em.createQuery("SELECT u FROM User u WHERE u.id = :id", User.class)
+                .setParameter("id", user.getId())
+                .getSingleResult());
     }
 }

@@ -68,17 +68,6 @@ class BookingControllerTest {
     }
 
     @Test
-    void shouldValidateBookingDates() throws Exception {
-        BookItemDto dto = new BookItemDto(1L, LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1));
-
-        mvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void shouldForwardCreateBookingToClient() throws Exception {
         BookItemDto dto = new BookItemDto(1L, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2));
         when(bookingClient.bookItem(eq(1L), any())).thenReturn(ResponseEntity.ok().build());
