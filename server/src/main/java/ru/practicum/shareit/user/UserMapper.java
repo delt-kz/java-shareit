@@ -17,7 +17,7 @@ public class UserMapper {
                 user.getEmail());
     }
 
-    public static User fromUpdate(UserResponseDto patch, User oldUser) {
+    public static User fromUpdate(UserRequestDto patch, User oldUser) {
         User newUser = new User();
         if (patch.getEmail() != null) {
             newUser.setEmail(patch.getEmail());

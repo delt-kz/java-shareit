@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponseDto update(Long userId, UserResponseDto patch) {
+    public UserResponseDto update(Long userId, UserRequestDto patch) {
         User existing = userRepo.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
 

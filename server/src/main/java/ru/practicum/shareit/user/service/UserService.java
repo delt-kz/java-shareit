@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserService {
     UserResponseDto create(UserRequestDto dto);
 
-    UserResponseDto update(Long userId, UserResponseDto patch);
+    UserResponseDto update(Long userId, UserRequestDto patch);
 
     UserResponseDto getById(Long userId);
 
